@@ -29,6 +29,7 @@ rustyCli/
     ├── main.rs              # Entry point of the application
     ├── parser.rs            # Command parsing and variable expansion
     └── signal_handler.rs    # Signal handling (e.g., Ctrl+C)
+├── Readme.md
 ```
 ---
 
@@ -53,6 +54,11 @@ cargo build
 ### Running the Shell
 ```bash
 cargo run
+```
+or you can directly run the binary
+
+```bash
+./target/debug/shell_project
 ```
 
 ## Built-in Commands
@@ -119,3 +125,68 @@ nix = "0.26.2"
 rustyline = "11.1.2"
 regex = "1.7.1"
 ```
+
+## Testing
+To ensure the shell works correctly, perform the following tests:
+
+### 1. Variable Expansion Test
+```bash
+> export GREETING=Hello
+> echo $GREETING, World!
+Hello, World!
+```
+
+### 2.Command History Test
+
+```bash
+> ls
+> pwd
+> history
+  1  ls
+  2  pwd
+  3  history
+```
+
+### 3. Signal Handling Test
+
+```bash
+> sleep 60
+# Press Ctrl+C
+Received Ctrl+C. Type 'exit' to quit.
+```
+### 4.Piping and Redirection Test
+```bash
+> ls | grep rs > rust_files.txt
+> cat rust_files.txt
+builtins.rs
+command.rs
+env_vars.rs
+executor.rs
+job_control.rs
+main.rs
+parser.rs
+signal_handler.rs
+```
+
+### 5.Job Control Test
+```bash
+> sleep 30 &
+[1] 12347
+> jobs
+[1] Running PID 12347
+> fg 1
+Bringing job [1] to foreground
+# Waits for the job to complete
+```
+
+### 6. Redirection and Append Test
+``` bash
+> echo "First Line" > file.txt
+> echo "Second Line" >> file.txt
+> cat file.txt
+First Line
+Second Line
+```
+
+## Acknowledgments
+**Rust Language**: Thanks to the Rust community for providing a safe and efficient programming language.
