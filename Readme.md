@@ -17,9 +17,19 @@ A Rust-based command-line shell with Unix-like features, including advanced comm
 ---
 
 ## Project Structure
-shell_project/ ├── Cargo.toml └── src/ ├── builtins.rs # Built-in shell commands ├── command.rs # Command structures ├── env_vars.rs # Environment variable management ├── executor.rs # Command execution logic ├── job_control.rs # Job control for background processes ├── main.rs # Entry point of the application ├── parser.rs # Command parsing and variable expansion └── signal_handler.rs # Signal handling (e.g., Ctrl+C)
-
-
+```bash
+rustyCli/
+├── Cargo.toml
+└── src/
+    ├── builtins.rs          # Built-in shell commands
+    ├── command.rs           # Command structures
+    ├── env_vars.rs          # Environment variable management
+    ├── executor.rs          # Command execution logic
+    ├── job_control.rs       # Job control for background processes
+    ├── main.rs              # Entry point of the application
+    ├── parser.rs            # Command parsing and variable expansion
+    └── signal_handler.rs    # Signal handling (e.g., Ctrl+C)
+```
 ---
 
 ## Installation
