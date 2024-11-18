@@ -1,7 +1,10 @@
 [package]
-name = "tshell"
+name = "RustyCLI"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 libc = "0.2.158"
+nix = "0.26.2"
+rustyline = "11.1.2"
+regex = "1.7.1"
