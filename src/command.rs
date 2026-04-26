@@ -1,27 +1,56 @@
-#[derive(Debug, Clone)]
-pub enum Operator {
-    Pipe,
-    RedirectIn,
-    RedirectOut,
-    AppendOut,
-    Background,
-    None,
-}
+use std::fmt;
 
 #[derive(Debug, Clone)]
+pub struct Redirect {
+    pub path: String,
+    pub append: bool,
+}
+
+#[derive(Debug, Clone, Default)]
 pub struct Command {
     pub name: String,
     pub args: Vec<String>,
-    pub operator: Operator,
-    pub next: Option<Box<Command>>,
     pub input_redirection: Option<String>,
-    pub output_redirection: Option<String>,
-    pub append_output: bool,
-    pub background: bool,
+    pub output_redirection: Option<Redirect>,
 }
 
 impl Command {
     pub fn is_empty(&self) -> bool {
         self.name.is_empty()
+    }
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct Pipeline {
+    pub stages: Vec<Command>,
+    pub background: bool,
+}
+
+impl Pipeline {
+    pub fn is_empty(&self) -> bool {
+        self.stages.is_empty() || (self.stages.len() == 1 && self.stages[0].is_empty())
+    }
+}
+
+impl fmt::Display for Pipeline {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let parts: Vec<String> = self
+            .stages
+            .iter()
+            .map(|c| {
+                let mut s = c.name.clone();
+                for a in &c.args {
+                    s.push(' ');
+                    s.push_str(a);
+                }
+                s
+            })
+            .collect();
+        write!(
+            f,
+            "{}{}",
+            parts.join(" | "),
+            if self.background { " &" } else { "" }
+        )
     }
 }

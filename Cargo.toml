@@ -1,10 +1,22 @@
 [package]
-name = "RustyCLI"
+name = "rustycli"
 version = "0.1.0"
 edition = "2021"
+description = "A Unix-like shell written in Rust"
+license = "MIT"
+repository = "https://github.com/tanishq0421/RustyCLI"
+
+[[bin]]
+name = "rustycli"
+path = "src/main.rs"
 
 [dependencies]
-libc = "0.2.158"
-nix = "0.26.2"
-rustyline = "11.1.2"
-regex = "1.7.1"
+anyhow = "1.0"
+thiserror = "1.0"
+libc = "0.2"
+nix = { version = "0.27", features = ["process", "signal", "fs"] }
+regex = "1"
+rustyline = "14"
+
+[dev-dependencies]
+tempfile = "3"

@@ -1,16 +1,16 @@
-use nix::sys::wait::{waitpid, WaitPidFlag};
+use nix::sys::wait::waitpid;
 use nix::unistd::Pid;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 pub struct JobControl {
-    pub jobs: HashMap<u32, Pid>,
+    pub jobs: BTreeMap<u32, Pid>,
     pub next_job_id: u32,
 }
 
 impl JobControl {
     pub fn new() -> Self {
         Self {
-            jobs: HashMap::new(),
+            jobs: BTreeMap::new(),
             next_job_id: 1,
         }
     }
@@ -38,7 +38,15 @@ impl JobControl {
 
     pub fn bring_job_to_foreground(&mut self, job_id: u32, pid: Pid) {
         println!("Bringing job [{}] to foreground", job_id);
-        waitpid(pid, None).expect("Failed to wait on child");
+        if let Err(e) = waitpid(pid, None) {
+            eprintln!("fg: waitpid failed: {}", e);
+        }
         self.remove_job(job_id);
+    }
+}
+
+impl Default for JobControl {
+    fn default() -> Self {
+        Self::new()
     }
 }
