@@ -1,4 +1,5 @@
 use crate::command::Command;
+use crate::completion::RustyHelper;
 use crate::env_vars::Environment;
 use crate::job_control::JobControl;
 use rustyline::history::DefaultHistory;
@@ -11,7 +12,7 @@ pub const BUILTINS: &[&str] = &[
     "cd", "pwd", "echo", "export", "unset", "history", "clear", "exit", "jobs", "fg", "help",
 ];
 
-pub type ShellEditor = Editor<(), DefaultHistory>;
+pub type ShellEditor = Editor<RustyHelper, DefaultHistory>;
 
 /// Returns `Some(exit_code)` if `command` is a builtin (and was handled),
 /// otherwise `None` so the executor can try to spawn it.

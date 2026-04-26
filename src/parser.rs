@@ -17,7 +17,8 @@ pub enum ParseError {
 
 #[derive(Debug, PartialEq, Clone)]
 enum Token {
-    Word(String),
+    /// Word(text, quoted)
+    Word(String, bool),
     Pipe,
     RedirectIn,
     RedirectOut,
@@ -83,26 +84,27 @@ fn parse_command(iter: &mut Peekable<IntoIter<Token>>) -> Result<Command, ParseE
     let mut cmd = Command::default();
     while let Some(tok) = iter.peek() {
         match tok {
-            Token::Word(_) => {
-                if let Some(Token::Word(w)) = iter.next() {
+            Token::Word(_, _) => {
+                if let Some(Token::Word(w, quoted)) = iter.next() {
                     if cmd.name.is_empty() {
                         cmd.name = w;
                     } else {
                         cmd.args.push(w);
+                        cmd.args_quoted.push(quoted);
                     }
                 }
             }
             Token::RedirectIn => {
                 iter.next();
                 match iter.next() {
-                    Some(Token::Word(file)) => cmd.input_redirection = Some(file),
+                    Some(Token::Word(file, _)) => cmd.input_redirection = Some(file),
                     _ => return Err(ParseError::MissingRedirectionTarget),
                 }
             }
             Token::RedirectOut => {
                 iter.next();
                 match iter.next() {
-                    Some(Token::Word(file)) => {
+                    Some(Token::Word(file, _)) => {
                         cmd.output_redirection = Some(Redirect {
                             path: file,
                             append: false,
@@ -114,7 +116,7 @@ fn parse_command(iter: &mut Peekable<IntoIter<Token>>) -> Result<Command, ParseE
             Token::AppendOut => {
                 iter.next();
                 match iter.next() {
-                    Some(Token::Word(file)) => {
+                    Some(Token::Word(file, _)) => {
                         cmd.output_redirection = Some(Redirect {
                             path: file,
                             append: true,
@@ -179,7 +181,7 @@ fn tokenize(input: &str) -> Result<Vec<Token>, ParseError> {
                 if !closed {
                     return Err(ParseError::UnterminatedQuote);
                 }
-                tokens.push(Token::Word(s));
+                tokens.push(Token::Word(s, true));
             }
             _ => {
                 let mut s = String::new();
@@ -193,7 +195,7 @@ fn tokenize(input: &str) -> Result<Vec<Token>, ParseError> {
                     s.push(c);
                     chars.next();
                 }
-                tokens.push(Token::Word(s));
+                tokens.push(Token::Word(s, false));
             }
         }
     }

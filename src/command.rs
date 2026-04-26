@@ -10,6 +10,9 @@ pub struct Redirect {
 pub struct Command {
     pub name: String,
     pub args: Vec<String>,
+    /// Parallel to `args`. `true` means the argument was quoted in the source
+    /// (so glob/var expansion may want to leave it alone).
+    pub args_quoted: Vec<bool>,
     pub input_redirection: Option<String>,
     pub output_redirection: Option<Redirect>,
 }
